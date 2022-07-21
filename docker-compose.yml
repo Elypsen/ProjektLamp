@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  php-apache: #nom qu'on devra repeter dans le depends_on
+    container_name: phpserver
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./php:/var/www/html
+    ports:
+      - 8000:80
+  db:
+    container_name: db
+    image: mysql
+    restart: always #se relance au lancement de docker desktop (dockerEngine) ou en cas de crash
+    environment:
+      MYSQL_ROOT_PASSWORD: "bacon"
+      MYSQL_DATABASE: "mydb"
+      MYSQL_USER: "cheddar"
+      MYSQL_PASSWORD: "bacon"
+    ports: 
+     - "9906:3306"
+
+  pma: 
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    restart: always
+    environment:
+      PMA_HOST: db
+    depends_on: 
+      - db 
+    
